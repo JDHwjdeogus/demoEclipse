@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<style type="text/css">
+    table {border-collapse: collapse; margin: 100px auto;}
+    th, td {width: 166px; height: 66px; color: #f3e66e; border: 1px solid #f3e66e; text-align: center; background: #887b0899;}
+</style>
+</head>
+<body>
+	<h2>안녕하세요 여기는 EMP 화면 입니다.</h2>
+	
+	<input id= "empno" type="text" placeholder="사원번호를 입력하세요. " />
+	<input id= "ename" type="text" placeholder="사원명을 입력하세요. " />
+	<input id= "job" type="text" placeholder="직책을 입력하세요. " />
+	<input id= "sal" type="text" placeholder="급여를 입력하세요. " />
+	<button type="button" onclick="join()"> 사원 추가 </button>
+	
+	
+	<div id="result"></div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	window.onload = function(){
+        $.ajax({
+            url: '/api/v1/emp',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+            	
+            	console.log(response);
+            	
+            	var out_table = "";
+                out_table += "<table>";
+            	out_table += "<tr> <th>사원번호</th> <th>사원명</th> <th>직책</th> <th>급여</th> <th>고용일</th> </tr>";
+            	
+                for (var j = 0; j < response.length; j++) {
+                	out_table += "<tr>"
+                				+ "<td>" + response[j].empno + "</td>"
+                				+ "<td>" + response[j].ename + "</td>"
+                				+ "<td>" + response[j].job + "</td>"
+                				+ "<td>" + response[j].sal + "</td>"
+                				+ "<td>" + response[j].hiredate + "</td>"
+                				+"</tr>";
+                }
+                out_table += "</table>";
+                $("#result").append(out_table);
+            },
+        });  
+	}
+	
+	function join(){
+		var empno = $('#empno').val();
+		var ename = $('#ename').val();
+		var job = $('#job').val();
+		var sal = $('#sal').val();
+		
+		var jsonData = {
+			"empno" : empno,
+			"ename" : ename,
+			"job" : job,
+			"sal" : sal
+		}
+		
+		// AJAX 호출
+        $.ajax({
+        	url: '/api/v1/emp/join',
+        	type:'POST',
+        	contentType: 'application/json',
+        	data: JSON.stringify(jsonData),
+        	dataType: 'json',
+        	success: function(response){
+        		console.log(response);
+        		alert("사원 추가 완료...!");
+        		location.reload();
+        	}
+        });
+	}
+</script>
+</html>
